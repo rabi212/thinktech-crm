@@ -1,0 +1,15 @@
+INSERT INTO MasterFields (CompanyId, module, fieldName, label, type, required, visible, isCustom, sortOrder, createdAt, updatedAt) VALUES
+(5, 'VendorEnquiry', 'enquiryNumber', 'Enquiry Number', 'text', 0, 1, 0, 0, NOW(), NOW()),
+(5, 'VendorEnquiry', 'enquiryDate', 'Enquiry Date', 'date', 1, 1, 0, 1, NOW(), NOW()),
+(5, 'VendorEnquiry', 'VendorId', 'Vendor', 'relation', 1, 1, 0, 2, NOW(), NOW()),
+(5, 'VendorEnquiry', 'contactPerson', 'Contact Person', 'text', 0, 1, 0, 3, NOW(), NOW()),
+(5, 'VendorEnquiry', 'mobileNumber', 'Mobile Number', 'text', 0, 1, 0, 4, NOW(), NOW()),
+(5, 'VendorEnquiry', 'email', 'Email', 'text', 0, 1, 0, 5, NOW(), NOW()),
+(5, 'VendorEnquiry', 'productService', 'Product/Service', 'text', 0, 1, 0, 6, NOW(), NOW()),
+(5, 'VendorEnquiry', 'quantity', 'Quantity', 'number', 0, 1, 0, 7, NOW(), NOW()),
+(5, 'VendorEnquiry', 'expectedClosingDate', 'Expected Closing Date', 'date', 0, 1, 0, 8, NOW(), NOW()),
+(5, 'VendorEnquiry', 'AssignedToId', 'Assigned To', 'relation', 0, 1, 0, 9, NOW(), NOW()),
+(5, 'VendorEnquiry', 'priority', 'Priority', 'select', 0, 1, 0, 10, NOW(), NOW()),
+(5, 'VendorEnquiry', 'status', 'Status', 'select', 1, 1, 0, 11, NOW(), NOW()),
+(5, 'VendorEnquiry', 'estimatedValue', 'Estimated Value', 'number', 0, 1, 0, 12, NOW(), NOW()),
+(5, 'VendorEnquiry', 'details', 'Details', 'textarea', 0, 1, 0, 13, NOW(), NOW());
