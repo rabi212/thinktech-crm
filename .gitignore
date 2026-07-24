@@ -1,0 +1,7 @@
+# Google Cloud credentials
+github-key.json
+*.json
+
+# Environment files
+.env
+.env.*

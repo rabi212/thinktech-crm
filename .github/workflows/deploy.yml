@@ -1,0 +1,75 @@
+name: Deploy ThinkTech CRM
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  GKE_REGION: ${{ secrets.GKE_REGION }}
+  REPOSITORY: ${{ secrets.ARTIFACT_REGISTRY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_REGION }}
+
+      - name: Build Backend
+        run: |
+          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-backend:${{ github.sha }} ./backend
+
+      - name: Build Frontend
+        run: |
+          docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-frontend:${{ github.sha }} .
+
+      - name: Push Backend
+        run: |
+          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-backend:${{ github.sha }}
+
+      - name: Push Frontend
+        run: |
+          docker push asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-frontend:${{ github.sha }}
+
+      - name: Update Backend Deployment
+        run: |
+          kubectl set image deployment/thinktech-backend \
+          backend=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-backend:${{ github.sha }} \
+          -n thinktech
+
+      - name: Update Frontend Deployment
+        run: |
+          kubectl set image deployment/thinktech-frontend \
+          frontend=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/thinktech-frontend:${{ github.sha }} \
+          -n thinktech
+
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status deployment/thinktech-backend -n thinktech
+          kubectl rollout status deployment/thinktech-frontend -n thinktech
